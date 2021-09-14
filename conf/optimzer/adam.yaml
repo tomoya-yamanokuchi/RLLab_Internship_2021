@@ -1,5 +1,5 @@
 # reference --> https://keras.io/ja/models/model/#fit
-epochs     : 1
+epochs     : 30
 batch_size : 128
 
 # reference --> https://keras.io/ja/optimizers/#adam

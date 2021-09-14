@@ -4,3 +4,4 @@ defaults:
   - optimzer   : adam
   - checkpoint : checkpoint
   - dataset    : dataset
+  - visualize  : visualize

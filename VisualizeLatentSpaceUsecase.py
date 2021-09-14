@@ -28,8 +28,6 @@ class VisualizeLatentSpaceUsecase:
 
 
     def run(self, config, model_load_path):
-        # vae = keras.models.load_model("{}.h5".format(model_load_path))
-
         vae = VariationalAutoEncoder(config)
         vae.built = True
         vae.load_weights("{}.h5".format(model_load_path))
@@ -40,9 +38,9 @@ class VisualizeLatentSpaceUsecase:
 
         z_mean, _, _   = vae.encoder.predict(x)
 
-        colors, makers, cm = self.get_color_and_marker(y)
+        # colors, makers, cm = self.get_color_and_marker(y)
         plt.figure(figsize=(12, 10))
-        plt.scatter(z_mean[:, 0], z_mean[:, 1], c=colors)
+        plt.scatter(z_mean[:, 0], z_mean[:, 1], c=y)
         plt.colorbar()
         plt.xlabel("z[0]")
         plt.ylabel("z[1]")

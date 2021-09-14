@@ -1,2 +1,2 @@
-model_dir  : "20210914154111"
-model_name : "model_epoch030_loss149.98"
+model_dir  : "epoch30_batch_size128_dataset_MNIST_20210914222856"
+model_name : "model_epoch030"

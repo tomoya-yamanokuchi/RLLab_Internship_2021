@@ -1,0 +1,82 @@
+from Dataset import Dataset
+from DatasetFactory import DatasetFactory
+import os
+import time
+from VariationalAutoEncoder import VariationalAutoEncoder
+import numpy as np
+from tensorflow import keras
+from keras.callbacks import ModelCheckpoint
+
+import matplotlib
+matplotlib.rcParams['pdf.fonttype'] = 42
+matplotlib.rcParams['ps.fonttype'] = 42
+import matplotlib.pyplot as plt
+from matplotlib import ticker, cm
+
+
+class VisualizeSamplingImagesUsecase:
+    def get_color_and_marker(self, label):
+        cm              = plt.get_cmap('jet')
+        mnist_label_num = 10
+        colors          = []
+        markers_set     = ["*", "s", "v", "^", "+", "o", "P", "D", "p", "d"]
+        markers         = []
+        for i in list(label):
+            colors.append(cm(1.*i/mnist_label_num))
+            markers.append(markers_set[i])
+        return colors, markers, cm
+
+
+    def run(self, config, model_load_path):
+        vae = VariationalAutoEncoder(config)
+        vae.built = True
+        vae.load_weights("{}.h5".format(model_load_path))
+
+        # display a n*n 2D manifold of digits
+        n          = config.visualize.image_num
+        figsize    = config.visualize.figsize
+        digit_size = config.visualize.digit_size
+        scale      = config.visualize.scale
+        figure     = np.zeros((digit_size * n, digit_size * n))
+        # linearly spaced coordinates corresponding to the 2D plot
+        # of digit classes in the latent space
+        grid_x     = np.linspace(-scale, scale, n)
+        grid_y     = np.linspace(-scale, scale, n)[::-1]
+        for i, yi in enumerate(grid_y):
+            for j, xi in enumerate(grid_x):
+                z_sample = np.array([[xi, yi]])
+                x_decoded = vae.decoder.predict(z_sample)
+                digit = x_decoded[0].reshape(digit_size, digit_size)
+                figure[
+                    i * digit_size : (i + 1) * digit_size,
+                    j * digit_size : (j + 1) * digit_size,
+                ] = digit
+
+        plt.figure(figsize=(figsize, figsize))
+        start_range    = digit_size // 2
+        end_range      = n * digit_size + start_range
+        pixel_range    = np.arange(start_range, end_range, digit_size)
+        sample_range_x = np.round(grid_x, 1)
+        sample_range_y = np.round(grid_y, 1)
+        plt.xticks(pixel_range, sample_range_x)
+        plt.yticks(pixel_range, sample_range_y)
+        plt.xlabel("z[0]")
+        plt.ylabel("z[1]")
+        plt.imshow(figure, cmap="Greys_r")
+        plt.show()
+
+
+if __name__ == '__main__':
+    import hydra
+    from omegaconf import DictConfig, OmegaConf
+    from hydra.core.config_store import ConfigStore
+
+    execution_dir   = os.getcwd()
+    config_test     = OmegaConf.load(execution_dir + "/conf/model_load/model_load.yaml")
+    model_load_path = execution_dir + "/model/" + config_test.model_dir + "/" + config_test.model_name
+
+    cfg             = OmegaConf.load(execution_dir + "/model/" + config_test.model_dir + "/config.yaml")
+    cfg.visualize   = OmegaConf.load(execution_dir + "/conf/visualize/visualize.yaml")
+
+    usecase = VisualizeSamplingImagesUsecase()
+    usecase.run(cfg, model_load_path)
