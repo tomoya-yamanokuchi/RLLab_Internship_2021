@@ -4,13 +4,13 @@ from tensorflow import keras
 from tensorflow.keras import layers
 
 
-class Decoder: 
+class Decoder:
     def __init__(self, config):
         self.config      = config
         self.latent_dim  = config.latent_dim
         # self.input_shape = config.input_shape
-    
-    
+
+
     def construct(self):
         inputs  = keras.Input(shape=(self.latent_dim,))
         x       = layers.Dense(7 * 7 * 64, activation="relu")(inputs)
@@ -21,7 +21,7 @@ class Decoder:
         decoder = keras.Model(inputs, outputs, name="decoder")
         decoder.summary()
         return decoder
-    
+
 
 if __name__ == '__main__':
     import hydra
@@ -31,4 +31,3 @@ if __name__ == '__main__':
 
     cfg = OmegaConf.load('/hdd_mount/RLLab_Internship_2021/conf/decoder/decoder.yaml')
     encoder = Decoder(cfg)
-    

@@ -1,7 +1,7 @@
 defaults:
   - encoder    : encoder
   - decoder    : decoder
-  - optimzer   : adam
+  - optimizer   : adam
   - checkpoint : checkpoint
   - dataset    : dataset
   - visualize  : visualize

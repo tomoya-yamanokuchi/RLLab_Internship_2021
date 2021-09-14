@@ -16,8 +16,8 @@ def format_image(img):
 
 def create_model_save_path(config, execution_dir):
     use_param = [
-        "epoch{}".format(config.optimzer.epochs),
-        "batch_size{}".format(config.optimzer.batch_size),
+        "epoch{}".format(config.optimizer.epochs),
+        "batch_size{}".format(config.optimizer.batch_size),
         "dataset_{}".format(config.dataset.dataset_name),
         time.strftime('%Y%m%d%H%M%S', time.localtime())
     ]

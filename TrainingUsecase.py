@@ -14,12 +14,12 @@ class TrainingUsecase:
         vae = VariationalAutoEncoder(config)
 
         vae.compile(optimizer=keras.optimizers.Adam(
-            learning_rate = config.optimzer.lr,
-            beta_1        = config.optimzer.beta_1,
-            beta_2        = config.optimzer.beta_2,
-            epsilon       = None if config.optimzer.epsilon=='None' else config.optimzer.epsilon,
-            decay         = config.optimzer.decay,
-            amsgrad       = config.optimzer.amsgrad
+            learning_rate = config.optimizer.lr,
+            beta_1        = config.optimizer.beta_1,
+            beta_2        = config.optimizer.beta_2,
+            epsilon       = None if config.optimizer.epsilon=='None' else config.optimizer.epsilon,
+            decay         = config.optimizer.decay,
+            amsgrad       = config.optimizer.amsgrad
         ))
 
         factory    = DatasetFactory()
@@ -38,8 +38,8 @@ class TrainingUsecase:
 
         vae.fit(
             x          = x_train,
-            epochs     = config.optimzer.epochs,
-            batch_size = config.optimzer.batch_size,
+            epochs     = config.optimizer.epochs,
+            batch_size = config.optimizer.batch_size,
             callbacks  = [checkpoint],
         )
 
