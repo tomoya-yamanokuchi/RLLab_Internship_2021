@@ -1,9 +1,10 @@
+from Dataset import Dataset
+from DatasetFactory import DatasetFactory
 import os
 import time
 from VariationalAutoEncoder import VariationalAutoEncoder
 import numpy as np
 from tensorflow import keras
-import GeneralService as srv
 from keras.callbacks import ModelCheckpoint
 
 
@@ -20,8 +21,10 @@ class TrainingUsecase:
             amsgrad       = config.optimzer.amsgrad
         ))
 
-        (x_train, _), (x_test, _) = keras.datasets.mnist.load_data()
-        x_train = srv.format_image(x_train)
+        factory = DatasetFactory()
+        dataset = factory.create(config.dataset.dataset_name)
+        x_train = dataset.load_train()
+
 
         checkpoint = ModelCheckpoint(
             filepath          = os.path.join(model_save_path, 'model_epoch{epoch:03d}_loss{loss:.2f}.h5'),
