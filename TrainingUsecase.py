@@ -4,6 +4,7 @@ import os
 import time
 from VariationalAutoEncoder import VariationalAutoEncoder
 import numpy as np
+import tensorflow as tf
 from tensorflow import keras
 from keras.callbacks import ModelCheckpoint
 
@@ -26,22 +27,27 @@ class TrainingUsecase:
         x_train = dataset.load_train()
 
 
-        checkpoint = ModelCheckpoint(
-            filepath          = os.path.join(model_save_path, 'model_epoch{epoch:03d}_loss{loss:.2f}.h5'),
-            monitor           = config.checkpoint.monitor,
-            save_weights_only = config.checkpoint.save_weights_only,
-            save_best_only    = config.checkpoint.save_best_only,
-            save_freq         = config.checkpoint.save_freq,
-            verbose           = config.checkpoint.verbose,
-        )
+        # checkpoint = ModelCheckpoint(
+        #     filepath          = os.path.join(model_save_path, 'model_epoch{epoch:03d}_loss{loss:.2f}.h5'),
+        #     monitor           = config.checkpoint.monitor,
+        #     save_weights_only = config.checkpoint.save_weights_only,
+        #     save_best_only    = config.checkpoint.save_best_only,
+        #     save_freq         = config.checkpoint.save_freq,
+        #     verbose           = config.checkpoint.verbose,
+        # )
 
         vae.fit(
             x          = x_train,
             epochs     = config.optimzer.epochs,
             batch_size = config.optimzer.batch_size,
-            callbacks  = [checkpoint],
+            callbacks  = [],
         )
 
+        tf.keras.models.save_model(
+            model       = vae,
+            filepath    = os.path.join(model_save_path, 'model_epoch{:03d}_batch_size{:.2f}.h5'.format(config.optimzer.epochs, config.optimzer.batch_size)),
+            save_format = "tf"
+        )
 
 
 if __name__ == '__main__':

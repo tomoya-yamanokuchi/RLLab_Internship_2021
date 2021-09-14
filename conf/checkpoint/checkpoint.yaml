@@ -1,5 +1,6 @@
+# reference --> https://keras.io/api/callbacks/model_checkpoint/
 monitor           : 'loss'
-save_weights_only : True
+save_weights_only : True # True
 save_best_only    : False
 save_freq         : 'epoch'
 verbose           : 1

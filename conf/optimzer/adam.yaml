@@ -1,6 +1,8 @@
-epochs     : 3
+# reference --> https://keras.io/ja/models/model/#fit
+epochs     : 1
 batch_size : 128
 
+# reference --> https://keras.io/ja/optimizers/#adam
 lr         : 0.001
 beta_1     : 0.9
 beta_2     : 0.999
