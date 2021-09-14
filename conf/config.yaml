@@ -1,0 +1,5 @@
+defaults:
+  - encoder    : encoder
+  - decoder    : decoder
+  - optimzer   : adam
+  - checkpoint : checkpoint
