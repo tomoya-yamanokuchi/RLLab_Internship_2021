@@ -27,7 +27,7 @@ class VisualizeSamplingImagesUsecase:
         return colors, markers, cm
 
 
-    def run(self, config, model_load_path):
+    def run(self, config, model_load_path, model_name):
         vae = VariationalAutoEncoder(config)
         vae.built = True
         vae.load_weights("{}.h5".format(model_load_path))
@@ -63,7 +63,9 @@ class VisualizeSamplingImagesUsecase:
         plt.xlabel("z[0]")
         plt.ylabel("z[1]")
         plt.imshow(figure, cmap="Greys_r")
-        plt.show()
+        # plt.show()
+        os.makedirs("figure/SamplingImages", exist_ok=True)
+        plt.savefig("figure/SamplingImages/{}.png".format(model_name))
 
 
 if __name__ == '__main__':
@@ -77,6 +79,7 @@ if __name__ == '__main__':
 
     cfg             = OmegaConf.load(execution_dir + "/model/" + config_test.model_dir + "/config.yaml")
     cfg.visualize   = OmegaConf.load(execution_dir + "/conf/visualize/visualize.yaml")
+    model_name      = config_test.model_dir + "_" +  config_test.model_name
 
     usecase = VisualizeSamplingImagesUsecase()
-    usecase.run(cfg, model_load_path)
+    usecase.run(cfg, model_load_path, model_name)

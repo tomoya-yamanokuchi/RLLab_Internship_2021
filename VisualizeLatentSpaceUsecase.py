@@ -27,7 +27,7 @@ class VisualizeLatentSpaceUsecase:
         return colors, markers, cm
 
 
-    def run(self, config, model_load_path):
+    def run(self, config, model_load_path, model_name):
         vae = VariationalAutoEncoder(config)
         vae.built = True
         vae.load_weights("{}.h5".format(model_load_path))
@@ -44,7 +44,9 @@ class VisualizeLatentSpaceUsecase:
         plt.colorbar()
         plt.xlabel("z[0]")
         plt.ylabel("z[1]")
-        plt.show()
+        # plt.show()
+        os.makedirs("figure/LatentSpace", exist_ok=True)
+        plt.savefig("figure/LatentSpace/{}.png".format(model_name))
 
 
 if __name__ == '__main__':
@@ -56,6 +58,7 @@ if __name__ == '__main__':
     config_test     = OmegaConf.load(execution_dir + "/conf/model_load/model_load.yaml")
     model_load_path = execution_dir + "/model/" + config_test.model_dir + "/" + config_test.model_name
 
-    cfg     = OmegaConf.load(execution_dir + "/model/" + config_test.model_dir + "/config.yaml")
-    usecase = VisualizeLatentSpaceUsecase()
-    usecase.run(cfg, model_load_path)
+    cfg        = OmegaConf.load(execution_dir + "/model/" + config_test.model_dir + "/config.yaml")
+    usecase    = VisualizeLatentSpaceUsecase()
+    model_name = config_test.model_dir + "_" +  config_test.model_name
+    usecase.run(cfg, model_load_path, model_name)
