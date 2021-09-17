@@ -1,3 +1,4 @@
+import os
 from tensorflow.python.util.tf_export import API_ATTRS
 from Loss import Loss
 from Decoder import Decoder

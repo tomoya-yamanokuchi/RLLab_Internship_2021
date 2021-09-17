@@ -1,4 +1,4 @@
-from Sampler import Sampling
+from Sampling import Sampling
 import numpy as np
 import tensorflow as tf
 from tensorflow import keras
@@ -13,6 +13,10 @@ class Encoder:
 
     def construct(self):
         inputs    = keras.Input(shape=tuple(self.input_shape))
+        x         = layers.Conv2D(32, 3, activation="relu", strides=1, padding="same")(inputs)
+        x         = layers.Conv2D(16, 3, activation="relu", strides=2, padding="same")(x)
+        x         = layers.MaxPooling2D(pool_size=(2, 2), strides=None, padding='valid')(x)
+
         x         = layers.Conv2D(32, 3, activation="relu", strides=2, padding="same")(inputs)
         x         = layers.Conv2D(64, 3, activation="relu", strides=2, padding="same")(x)
         x         = layers.Flatten()(x)
