@@ -2,6 +2,14 @@ import numpy as np
 import time
 import os
 
+import matplotlib
+matplotlib.rcParams['pdf.fonttype'] = 42
+matplotlib.rcParams['ps.fonttype'] = 42
+import matplotlib.pyplot as plt
+from matplotlib import ticker, cm
+
+
+
 def format_image(img):
     img = img.astype("float32")
     if img.max() > 1.0:
@@ -24,3 +32,12 @@ def create_model_save_path(config, execution_dir):
     model_name = "_".join(use_param)
     model_save_path = execution_dir + "/model/" + model_name
     return model_save_path
+
+
+def plot_loss_history(loss_history, model_save_path):
+    fig, ax = plt.subplots(len(loss_history), 1)
+    for i, (key, val) in enumerate(loss_history.items()):
+        print(" key : {}".format(key))
+        ax[i].plot(np.array(val) , label=key)
+    plt.legend()
+    plt.savefig(model_save_path + "/loss.png")

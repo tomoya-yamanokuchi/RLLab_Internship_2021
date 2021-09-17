@@ -70,6 +70,45 @@ class VisualizeSamplingImagesUsecase:
         plt.savefig("figure/SamplingImages/{}.png".format(model_name))
 
 
+
+
+    def plot_given_model(self, config, vae, sampling_range, model_save_path):
+        n          = config.image_num
+        figsize    = config.figsize
+        digit_size = config.digit_size
+        figure     = np.zeros((digit_size * n, digit_size * n))
+        # linearly spaced coordinates corresponding to the 2D plot
+        # of digit classes in the latent space
+        grid_x     = np.linspace(sampling_range["z0"][0], sampling_range["z0"][1], n)
+        grid_y     = np.linspace(sampling_range["z1"][0], sampling_range["z1"][1], n)[::-1]
+        for i, yi in enumerate(grid_y):
+            for j, xi in enumerate(grid_x):
+                z_sample = np.array([[xi, yi]])
+                x_decoded = vae.decoder.predict(z_sample)
+                digit = x_decoded[0].reshape(digit_size, digit_size)
+                figure[
+                    i * digit_size : (i + 1) * digit_size,
+                    j * digit_size : (j + 1) * digit_size,
+                ] = digit
+
+        plt.figure(figsize=(figsize, figsize))
+        start_range    = digit_size // 2
+        end_range      = n * digit_size + start_range
+        pixel_range    = np.arange(start_range, end_range, digit_size)
+        sample_range_x = np.round(grid_x, 5)
+        sample_range_y = np.round(grid_y, 5)
+        plt.xticks(pixel_range, sample_range_x)
+        plt.yticks(pixel_range, sample_range_y)
+        plt.xlabel("z0")
+        plt.ylabel("z1")
+        plt.imshow(figure, cmap="Greys_r")
+        plt.savefig(model_save_path + "/sampling_images.png")
+
+
+
+
+
+
 if __name__ == '__main__':
     import hydra
     from omegaconf import DictConfig, OmegaConf
@@ -79,15 +118,15 @@ if __name__ == '__main__':
     config_test     = OmegaConf.load(execution_dir + "/conf/model_load/model_load.yaml")
 
     if config_test.model_name == "-1":
-        abs_model_dir          = execution_dir + "/model/" + config_test.model_dir
-        path_sub               = sorted(glob.glob(abs_model_dir + "/*.h5"))
-        path_sub               = natsorted(path_sub, key=lambda y: y.lower())
+        abs_model_dir   = execution_dir + "/model/" + config_test.model_dir
+        path_sub        = sorted(glob.glob(abs_model_dir + "/*.h5"))
+        path_sub        = natsorted(path_sub, key=lambda y: y.lower())
         model_load_path = path_sub[-1]
     else:
         model_load_path = execution_dir + "/model/" + config_test.model_dir + "/" + config_test.model_name + ".h5"
 
     cfg             = OmegaConf.load(execution_dir + "/model/" + config_test.model_dir + "/config.yaml")
-    cfg.visualize   = OmegaConf.load(execution_dir + "/conf/visualize/visualize.yaml")
+    cfg.visualize   = OmegaConf.load(execution_dir + "/conf/config.yaml").visualize
     model_name      = config_test.model_dir + "_" +  config_test.model_name
 
     usecase = VisualizeSamplingImagesUsecase()

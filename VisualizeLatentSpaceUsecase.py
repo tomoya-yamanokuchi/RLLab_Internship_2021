@@ -50,6 +50,15 @@ class VisualizeLatentSpaceUsecase:
         plt.savefig("figure/LatentSpace/{}.png".format(model_name))
 
 
+    def plot_given_data(self, z_mean, y, model_save_path):
+        plt.figure(figsize=(12, 10))
+        plt.scatter(z_mean[:, 0], z_mean[:, 1], c=y)
+        plt.colorbar()
+        plt.xlabel("z0")
+        plt.ylabel("z1")
+        plt.savefig(model_save_path + "/latent_space.png")
+
+
 if __name__ == '__main__':
     import hydra
     from omegaconf import DictConfig, OmegaConf
@@ -59,9 +68,9 @@ if __name__ == '__main__':
     config_test     = OmegaConf.load(execution_dir + "/conf/model_load/model_load.yaml")
 
     if config_test.model_name == "-1":
-        abs_model_dir          = execution_dir + "/model/" + config_test.model_dir
-        path_sub               = sorted(glob.glob(abs_model_dir + "/*.h5"))
-        path_sub               = natsorted(path_sub, key=lambda y: y.lower())
+        abs_model_dir   = execution_dir + "/model/" + config_test.model_dir
+        path_sub        = sorted(glob.glob(abs_model_dir + "/*.h5"))
+        path_sub        = natsorted(path_sub, key=lambda y: y.lower())
         model_load_path = path_sub[-1]
     else:
         model_load_path = execution_dir + "/model/" + config_test.model_dir + "/" + config_test.model_name + ".h5"

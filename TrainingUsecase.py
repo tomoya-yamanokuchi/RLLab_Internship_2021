@@ -1,3 +1,5 @@
+from VisualizeSamplingImagesUsecase import VisualizeSamplingImagesUsecase
+from VisualizeLatentSpaceUsecase import VisualizeLatentSpaceUsecase
 from Dataset import Dataset
 from DatasetFactory import DatasetFactory
 import os
@@ -7,6 +9,8 @@ import numpy as np
 import tensorflow as tf
 from tensorflow import keras
 from keras.callbacks import ModelCheckpoint
+import GeneralService as srv
+
 
 
 class TrainingUsecase:
@@ -22,9 +26,9 @@ class TrainingUsecase:
             amsgrad       = config.optimizer.amsgrad
         ))
 
-        factory    = DatasetFactory()
-        dataset    = factory.create(config.dataset.dataset_name)
-        x_train, _ = dataset.load_train()
+        factory          = DatasetFactory()
+        dataset          = factory.create(config.dataset.dataset_name)
+        x_train, y_train = dataset.load_train()
 
 
         checkpoint = ModelCheckpoint(
@@ -36,13 +40,27 @@ class TrainingUsecase:
             verbose           = config.checkpoint.verbose,
         )
 
-        vae.fit(
+        history_callback = vae.fit(
             x          = x_train,
             epochs     = config.optimizer.epochs,
             batch_size = config.optimizer.batch_size,
             callbacks  = [checkpoint],
         )
+        loss_history = history_callback.history
+        srv.plot_loss_history(loss_history, model_save_path)
 
+
+        z_mean, _, _   = vae.encoder.predict(x_train)
+        visLatentSpace = VisualizeLatentSpaceUsecase()
+        visLatentSpace.plot_given_data(z_mean, y_train, model_save_path)
+
+
+        visSampling = VisualizeSamplingImagesUsecase()
+        sampling_range = {
+            "z0" : [z_mean[:, 0].min(), z_mean[:, 0].max()],
+            "z1" : [z_mean[:, 1].min(), z_mean[:, 1].max()],
+        }
+        visSampling.plot_given_model(config.visualize, vae, sampling_range, model_save_path)
 
 
 if __name__ == '__main__':

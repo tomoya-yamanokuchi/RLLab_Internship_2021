@@ -11,8 +11,8 @@ class Decoder:
     def construct(self):
         inputs  = keras.Input(shape=(self.latent_dim,))
         x       = layers.Dense(7 * 7 * 64, activation="relu")(inputs)
-        x       = layers.Dense(7 * 7 * 64, activation="relu")(inputs)
-        x       = layers.Dense(7 * 7 * 64, activation="relu")(inputs)
+        # x       = layers.Dense(7 * 7 * 64, activation="relu")(inputs)
+        # x       = layers.Dense(7 * 7 * 64, activation="relu")(inputs)
         x       = layers.Reshape((7, 7, 64))(x)
         x       = layers.Conv2DTranspose(64, 3, activation="relu", strides=2, padding="same")(x)
         x       = layers.Conv2DTranspose(32, 3, activation="relu", strides=2, padding="same")(x)
