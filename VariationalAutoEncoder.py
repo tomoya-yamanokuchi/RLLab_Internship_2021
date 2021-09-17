@@ -10,12 +10,12 @@ from tensorflow.keras import layers
 
 class VariationalAutoEncoder(keras.Model):
     def __init__(self, config):
-        assert config.encoder.latent_dim == config.decoder.latent_dim
+        assert config.vae.latent_dim > 0
         super(VariationalAutoEncoder, self).__init__()
 
         self.config    = config
-        self.encoder   = Encoder(config.encoder).construct()
-        self.decoder   = Decoder(config.decoder).construct()
+        self.encoder   = Encoder(config.vae.latent_dim, config.vae.input_shape).construct()
+        self.decoder   = Decoder(config.vae.latent_dim).construct()
         self.objective = Loss()
 
         self.total_loss_tracker          = keras.metrics.Mean(name="total_loss")

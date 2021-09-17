@@ -1,7 +1,29 @@
-defaults:
-  - encoder    : encoder
-  - decoder    : decoder
-  - optimizer  : adam
-  - checkpoint : checkpoint
-  - dataset    : dataset
-  - visualize  : visualize
+vae:
+  latent_dim: 2
+  input_shape: [28, 28, 1]
+
+optimizer:
+  epochs    : 3
+  batch_size: 128
+  lr        : 0.001
+  beta_1    : 0.9
+  beta_2    : 0.999
+  epsilon   : None
+  decay     : 0.0
+  amsgrad   : false
+
+checkpoint:
+  monitor           : loss
+  save_weights_only : true
+  save_best_only    : false
+  save_freq         : epoch
+  verbose           : 1
+
+dataset:
+  dataset_name: soil
+
+visualize:
+  image_num : 30
+  figsize   : 15
+  digit_size: 28
+  scale     : 1.0

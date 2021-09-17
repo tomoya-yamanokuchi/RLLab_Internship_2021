@@ -12,7 +12,8 @@ matplotlib.rcParams['pdf.fonttype'] = 42
 matplotlib.rcParams['ps.fonttype'] = 42
 import matplotlib.pyplot as plt
 from matplotlib import ticker, cm
-
+from natsort import natsorted
+import glob
 
 class VisualizeLatentSpaceUsecase:
     def get_color_and_marker(self, label):
@@ -30,7 +31,7 @@ class VisualizeLatentSpaceUsecase:
     def run(self, config, model_load_path, model_name):
         vae = VariationalAutoEncoder(config)
         vae.built = True
-        vae.load_weights("{}.h5".format(model_load_path))
+        vae.load_weights("{}".format(model_load_path))
 
         factory = DatasetFactory()
         dataset = factory.create(config.dataset.dataset_name)
@@ -56,7 +57,14 @@ if __name__ == '__main__':
 
     execution_dir   = os.getcwd()
     config_test     = OmegaConf.load(execution_dir + "/conf/model_load/model_load.yaml")
-    model_load_path = execution_dir + "/model/" + config_test.model_dir + "/" + config_test.model_name
+
+    if config_test.model_name == "-1":
+        abs_model_dir          = execution_dir + "/model/" + config_test.model_dir
+        path_sub               = sorted(glob.glob(abs_model_dir + "/*.h5"))
+        path_sub               = natsorted(path_sub, key=lambda y: y.lower())
+        model_load_path = path_sub[-1]
+    else:
+        model_load_path = execution_dir + "/model/" + config_test.model_dir + "/" + config_test.model_name + ".h5"
 
     cfg        = OmegaConf.load(execution_dir + "/model/" + config_test.model_dir + "/config.yaml")
     usecase    = VisualizeLatentSpaceUsecase()

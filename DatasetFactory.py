@@ -1,3 +1,4 @@
+from soilDataset import soilDataset
 from MNISTDataset import MNISTDataset
 
 
@@ -7,6 +8,7 @@ class DatasetFactory:
 
         dataset_dict = {
             "MNIST" : MNISTDataset(),
+            "soil"  : soilDataset(),
         }
 
         print("\n")
