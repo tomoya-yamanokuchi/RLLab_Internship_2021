@@ -1,3 +1,4 @@
+import cv2
 import numpy as np
 import time
 import os
@@ -41,3 +42,8 @@ def plot_loss_history(loss_history, model_save_path):
         ax[i].plot(np.array(val) , label=key)
     plt.legend()
     plt.savefig(model_save_path + "/loss.png")
+
+
+def save_images_grid(img, model_save_path, filename):
+    img = img
+    cv2.imwrite(model_save_path + "/{}.png".format(filename), img)

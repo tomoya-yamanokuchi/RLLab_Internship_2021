@@ -2,12 +2,12 @@ vae:
   latent_dim  : 2
   input_shape : [28, 28, 1]
   alpha       : 1.0
-  beta        : 1.0
+  beta        : 0.5
 
 optimizer:
-  epochs    : 1
-  batch_size: 32
-  lr        : 0.001
+  epochs    : 100
+  batch_size: 64
+  lr        : 0.0001
   beta_1    : 0.9
   beta_2    : 0.999
   epsilon   : None
@@ -30,5 +30,5 @@ visualize:
   digit_size: 28
 
 model_load:
-  model_dir  : "epoch3_batch_size32_dataset_soil_20210917152039"
+  model_dir  : "epoch30_batch_size128_dataset_MNIST_20210917193423"
   model_name : "-1"

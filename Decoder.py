@@ -10,13 +10,16 @@ class Decoder:
 
     def construct(self):
         inputs  = keras.Input(shape=(self.latent_dim,))
-        x       = layers.Dense(7 * 7 * 64, activation="relu")(inputs)
-        # x       = layers.Dense(7 * 7 * 64, activation="relu")(inputs)
-        # x       = layers.Dense(7 * 7 * 64, activation="relu")(inputs)
-        x       = layers.Reshape((7, 7, 64))(x)
-        x       = layers.Conv2DTranspose(64, 3, activation="relu", strides=2, padding="same")(x)
-        x       = layers.Conv2DTranspose(32, 3, activation="relu", strides=2, padding="same")(x)
-        outputs = layers.Conv2DTranspose(1, 3, activation="sigmoid", padding="same")(x)
+        x       = layers.Dense(128, activation="relu")(inputs)
+        x       = layers.Dense(7 * 7 * 1, activation="relu")(inputs)
+        x       = layers.Reshape((7, 7, 1))(x)
+        x       = layers.Conv2D(filters=4,  kernel_size=3, activation="relu", strides=1, padding="same")(x)
+        x       = layers.Conv2D(filters=16, kernel_size=3, activation="relu", strides=1, padding="same")(x)
+        x       = layers.UpSampling2D(size=(2, 2), interpolation="bilinear")(x)
+        x       = layers.Conv2D(filters=16, kernel_size=3, activation="relu", strides=1, padding="same")(x)
+        x       = layers.Conv2D(filters=32, kernel_size=3, activation="relu", strides=1, padding="same")(x)
+        x       = layers.UpSampling2D(size=(2, 2), interpolation="bilinear")(x)
+        outputs = layers.Conv2D(filters=1, kernel_size=3, activation="sigmoid", strides=1, padding="same")(x)
         decoder = keras.Model(inputs, outputs, name="decoder")
         decoder.summary()
         return decoder

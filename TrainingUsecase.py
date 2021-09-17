@@ -29,7 +29,7 @@ class TrainingUsecase:
         factory          = DatasetFactory()
         dataset          = factory.create(config.dataset.dataset_name)
         x_train, y_train = dataset.load_train()
-
+        # srv.save_images_grid(x_train, model_save_path, filename="x_train")
 
         checkpoint = ModelCheckpoint(
             filepath          = os.path.join(model_save_path, 'model_epoch{epoch:03d}.h5'),
@@ -44,7 +44,8 @@ class TrainingUsecase:
             x          = x_train,
             epochs     = config.optimizer.epochs,
             batch_size = config.optimizer.batch_size,
-            callbacks  = [checkpoint],
+            # callbacks  = [checkpoint],
+            callbacks  = [],
         )
         loss_history = history_callback.history
         srv.plot_loss_history(loss_history, model_save_path)

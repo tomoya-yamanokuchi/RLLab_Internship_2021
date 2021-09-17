@@ -13,16 +13,22 @@ class Encoder:
 
     def construct(self):
         inputs    = keras.Input(shape=tuple(self.input_shape))
-        x         = layers.Conv2D(32, 3, activation="relu", strides=1, padding="same")(inputs)
-        x         = layers.Conv2D(16, 3, activation="relu", strides=2, padding="same")(x)
-        x         = layers.MaxPooling2D(pool_size=(2, 2), strides=None, padding='valid')(x)
+        x         = layers.Conv2D(filters=32, kernel_size=3, activation="relu", strides=1, padding="same")(inputs)
+        x         = layers.Conv2D(filters=16, kernel_size=3, activation="relu", strides=1, padding="same")(x)
+        x         = layers.MaxPooling2D(pool_size=(2, 2),   strides=1, padding='same')(x)
+        x         = layers.Conv2D(filters=16, kernel_size=3, activation="relu", strides=2, padding="same")(x)
+        x         = layers.Conv2D(filters=4, kernel_size=3, activation="relu", strides=1, padding="same")(x)
+        x         = layers.Conv2D(filters=1, kernel_size=3, activation="relu", strides=1, padding="same")(x)
+        x         = layers.MaxPooling2D(pool_size=(2, 2),   strides=2, padding='same')(x)
 
-        x         = layers.Conv2D(32, 3, activation="relu", strides=2, padding="same")(inputs)
-        x         = layers.Conv2D(64, 3, activation="relu", strides=2, padding="same")(x)
         x         = layers.Flatten()(x)
-        x         = layers.Dense(16, activation="relu")(x)
-        z_mean    = layers.Dense(self.latent_dim, name="z_mean")(x)
-        z_log_var = layers.Dense(self.latent_dim, name="z_log_var")(x)
+
+        x_mean    = layers.Dense(units=128, activation="relu")(x)
+        z_mean    = layers.Dense(self.latent_dim, name="z_mean")(x_mean)
+
+        x_log_var = layers.Dense(units=128, activation="relu")(x)
+        z_log_var = layers.Dense(self.latent_dim, name="z_log_var")(x_log_var)
+
         z         = Sampling()([z_mean, z_log_var])
         encoder   = keras.Model(inputs, [z_mean, z_log_var, z], name="encoder")
         encoder.summary()
