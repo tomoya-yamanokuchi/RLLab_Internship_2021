@@ -35,7 +35,7 @@ class VisualizeLatentSpaceUsecase:
 
         factory = DatasetFactory()
         dataset = factory.create(config.dataset.dataset_name)
-        x, y = dataset.load_test()
+        x, y = dataset.load_train()
 
         z_mean, _, _   = vae.encoder.predict(x)
 
@@ -47,7 +47,7 @@ class VisualizeLatentSpaceUsecase:
         plt.ylabel("z[1]")
         # plt.show()
         os.makedirs(save_path + "/latent_space", exist_ok=True)
-        plt.savefig(save_path + "/latent_space/{}.png".format(model_name))
+        plt.savefig(save_path + "/latent_space/{}_{}.png".format(model_name, time.strftime('%Y%m%d%H%M%S', time.localtime())))
 
 
     def plot_given_data(self, z_mean, y, model_save_path):

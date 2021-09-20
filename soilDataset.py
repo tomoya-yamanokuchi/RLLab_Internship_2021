@@ -23,7 +23,9 @@ class soilDataset(Dataset):
         X = [] # data
         Y = [] # label
         for index, dir_name in enumerate(soil_type):
-            files = glob.glob("../../../data/" + dir_name + '/*.png')
+            current_dir   = os.getcwd()
+            execution_dir = '/'.join(list(current_dir.partition('RLLab_Internship_2021')[:2]))
+            files         = glob.glob(execution_dir + "/data/" + dir_name + '/*.png')
             for f in files:
                 # open image
                 image = cv2.imread(f)
