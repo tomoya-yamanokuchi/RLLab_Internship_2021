@@ -1,3 +1,4 @@
+from CustomCallback import CustomCallback
 from VisualizeSamplingImagesUsecase import VisualizeSamplingImagesUsecase
 from VisualizeLatentSpaceUsecase import VisualizeLatentSpaceUsecase
 from Dataset import Dataset
@@ -31,8 +32,9 @@ class TrainingUsecase:
         x_train, y_train = dataset.load_train()
         # srv.save_images_grid(x_train, model_save_path, filename="x_train")
 
+        os.makedirs(model_save_path + '/model', exist_ok=True)
         checkpoint = ModelCheckpoint(
-            filepath          = os.path.join(model_save_path, 'model_epoch{epoch:03d}.h5'),
+            filepath          = os.path.join(model_save_path, 'model', 'model_epoch{epoch:03d}.h5'),
             monitor           = config.checkpoint.monitor,
             save_weights_only = config.checkpoint.save_weights_only,
             save_best_only    = config.checkpoint.save_best_only,
@@ -45,23 +47,11 @@ class TrainingUsecase:
             epochs     = config.optimizer.epochs,
             batch_size = config.optimizer.batch_size,
             # callbacks  = [checkpoint],
-            callbacks  = [],
+            callbacks  = [checkpoint, CustomCallback(x_train, y_train, model_save_path, config.callback.save_decoded_image_num, config.normalize)]
         )
         loss_history = history_callback.history
         srv.plot_loss_history(loss_history, model_save_path)
 
-
-        z_mean, _, _   = vae.encoder.predict(x_train)
-        visLatentSpace = VisualizeLatentSpaceUsecase()
-        visLatentSpace.plot_given_data(z_mean, y_train, model_save_path)
-
-
-        visSampling = VisualizeSamplingImagesUsecase()
-        sampling_range = {
-            "z0" : [z_mean[:, 0].min(), z_mean[:, 0].max()],
-            "z1" : [z_mean[:, 1].min(), z_mean[:, 1].max()],
-        }
-        visSampling.plot_given_model(config.visualize, vae, sampling_range, model_save_path)
 
 
 if __name__ == '__main__':

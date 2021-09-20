@@ -26,7 +26,7 @@ class soilDataset(Dataset):
             files = glob.glob("../../../data/" + dir_name + '/*.png')
             for f in files:
                 # open image
-                image = Image.open(f)
+                image = cv2.imread(f)
                 # convert image to numpy array
                 data = np.asarray(image)
                 # append

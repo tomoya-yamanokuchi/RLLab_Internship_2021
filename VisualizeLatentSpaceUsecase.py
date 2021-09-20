@@ -56,7 +56,7 @@ class VisualizeLatentSpaceUsecase:
         plt.colorbar()
         plt.xlabel("z0")
         plt.ylabel("z1")
-        plt.savefig(model_save_path + "/latent_space.png")
+        plt.savefig(model_save_path)
 
 
 if __name__ == '__main__':
