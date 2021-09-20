@@ -28,7 +28,7 @@ class VisualizeLatentSpaceUsecase:
         return colors, markers, cm
 
 
-    def run(self, config, model_load_path, model_name):
+    def run(self, config, model_name, save_path):
         vae = VariationalAutoEncoder(config)
         vae.built = True
         vae.load_weights("{}".format(model_load_path))
@@ -46,8 +46,8 @@ class VisualizeLatentSpaceUsecase:
         plt.xlabel("z[0]")
         plt.ylabel("z[1]")
         # plt.show()
-        os.makedirs("figure/LatentSpace", exist_ok=True)
-        plt.savefig("figure/LatentSpace/{}.png".format(model_name))
+        os.makedirs(save_path + "/latent_space", exist_ok=True)
+        plt.savefig(save_path + "/latent_space/{}.png".format(model_name))
 
 
     def plot_given_data(self, z_mean, y, model_save_path):
@@ -65,10 +65,11 @@ if __name__ == '__main__':
     from hydra.core.config_store import ConfigStore
 
     execution_dir   = os.getcwd()
-    config_test     = OmegaConf.load(execution_dir + "/conf/model_load/model_load.yaml")
+    config_test     = OmegaConf.load(execution_dir + "/conf/config.yaml").model_load
 
     if config_test.model_name == "-1":
-        abs_model_dir   = execution_dir + "/model/" + config_test.model_dir
+        save_path       = execution_dir + "/model/" + config_test.model_dir
+        abs_model_dir   = execution_dir + "/model/" + config_test.model_dir + "/model"
         path_sub        = sorted(glob.glob(abs_model_dir + "/*.h5"))
         path_sub        = natsorted(path_sub, key=lambda y: y.lower())
         model_load_path = path_sub[-1]
@@ -78,4 +79,4 @@ if __name__ == '__main__':
     cfg        = OmegaConf.load(execution_dir + "/model/" + config_test.model_dir + "/config.yaml")
     usecase    = VisualizeLatentSpaceUsecase()
     model_name = config_test.model_dir + "_" +  config_test.model_name
-    usecase.run(cfg, model_load_path, model_name)
+    usecase.run(cfg, model_name, save_path)
